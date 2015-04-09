@@ -1,0 +1,14 @@
+*.sdf
+*.opensdf
+*.o
+*.obj
+*.exe
+*.dll
+*/obj/*
+*/bin/*
+*/*/bin/*
+*/*/obj/*
+*/.klocwork/*
+*/*/.klocwork/*
+*.suo
+*.psess
