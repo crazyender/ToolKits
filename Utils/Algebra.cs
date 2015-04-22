@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -121,6 +122,71 @@ namespace Ender.Utils
             return a;
         }
 
-        
+        public static BigInteger Power(this BigInteger i, BigInteger p)
+        {
+            BigInteger result = i;
+            BigInteger times = p;
+            if (p.IsOne)
+                return i;
+
+            if (p.IsZero)
+                return 1;
+
+            if (!p.IsEven)
+                times = times - 1;
+            while (times != 1)
+            {
+                result = result * result;
+                times /= 2;
+            }
+
+            if (!p.IsEven)
+                result *= i;
+
+            return result;
+
+        }
+
+        public static BigInteger GenerateBigNumber(int bitsLength, bool makeSureOdd = false)
+        {
+            byte[] ran = new byte[(bitsLength-1)/8 + 1];
+            var rng = System.Security.Cryptography.RNGCryptoServiceProvider.Create();
+            rng.GetNonZeroBytes(ran);
+            var r = new BigInteger(ran);
+            if (r.Sign == -1)
+                r = 0 - r;
+            if (makeSureOdd)
+            {
+                if (r.IsEven)
+                    r = r + 1;
+            }
+            rng.Dispose();
+            return r;
+        }
+
+        public static BigInteger GenerateBigPrime(int bitsLength)
+        {
+            var round = bitsLength;
+            while(round > 0)
+            {
+                var testee = GenerateBigNumber(bitsLength, true);
+                var confidence = 3;
+                bool testResult = true;
+                for(var i = 0; i < confidence; i++)
+                {
+                    var a = GenerateBigNumber(i + 1);
+                    var powermod = BigInteger.ModPow(a, testee, testee);
+                    if (a != powermod)
+                    {
+                        testResult = false;
+                        break;
+                    }
+                }
+                if (testResult == true)
+                    return testee;
+            }
+
+            return 0;
+        }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ender.Utils;
+using System.Numerics;
 namespace Euler
 {
     partial class Program
@@ -61,6 +62,18 @@ namespace Euler
             Console.WriteLine("{0} / {1} == {2}", a.ToString(), b.ToString(), c.ToString());
 
             Console.WriteLine("test {0} == {1} : {2}", b.ToString(), d.ToString(), (b == d));
+
+
+            BigInteger i = new BigInteger(10);
+            BigInteger p = new BigInteger(3);
+            Console.WriteLine("{0} ^ {1} = {2}", i, p, i.Power(p));
+
+            BigInteger prime = Algebra.GenerateBigPrime(2048);
+            Console.WriteLine("{0} bit length prime {1}", 2048, prime);
+
+            i = new BigInteger(2);
+            p = new BigInteger(4);
+            Console.WriteLine("mode power {0}", BigInteger.ModPow(i, i, 3));
         }
 
         public void CodedTriangleNumbers()
@@ -204,6 +217,59 @@ namespace Euler
             }
             var fractions = result.NoDup();
             Console.WriteLine("{0}", fractions.Count());
+        }
+
+        public void PowerfulDigitCounts()
+        {
+            int n = 1;
+            long count = 0;
+            while(true)
+            {
+                // n digit number
+                // test 10^(n-1) <= 2^n < 10^n
+                var max = BigInteger.Pow(10, n);
+                var min = BigInteger.Pow(10, n-1);
+                var power_of_3 = BigInteger.Pow(3, n);
+                if (power_of_3 >= max)
+                    break;
+
+                BigInteger idx = 1;
+                var found = false;
+                while(true)
+                {
+                    var r = BigInteger.Pow(idx, n);
+                    if (r < min)
+                    {
+                        idx++;
+                        continue;
+                    }
+                    else if (r < max)
+                    {
+                        // found
+                        count++;
+                        idx++;
+                        found = true;
+                        continue;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                if (!found)
+                    break;
+                n++;
+            }
+            Console.WriteLine("{0}", count);
+        }
+
+        public void LargeNonMersennePrime()
+        {
+            BigInteger b = BigInteger.Pow(2, 7830457);
+            b *= 28433;
+            b += 1;
+            var result = b % 10000000000;
+            Console.WriteLine("{0}", result);
         }
     }
 }
