@@ -22,13 +22,15 @@ namespace Ender.Utils
 
         public static bool IsPrime(this long num)
         {
+            // dup with BigInteger.IsPrime
+            // because of performance issue
             if (num < 2)
                 return false;
 
             if (num == 2 || num == 3)
                 return true;
 
-            var p = (int)Math.Sqrt((double)num) + 1;
+            var p = (long)Math.Sqrt(num);
             for (var i = 2; i <= p; i++)
             {
                 if (num % i == 0)
@@ -37,6 +39,37 @@ namespace Ender.Utils
 
             return true;
         }
+
+        public static bool IsPrime(this BigInteger num)
+        {
+            if (num < 2)
+                return false;
+
+            if (num == 2 || num == 3)
+                return true;
+
+            var p = num.Sqrt();
+            for (var i = 2; i <= p; i++)
+            {
+                if (num % i == 0)
+                    return false;
+            }
+
+            return true;
+        }
+
+        public static BigInteger Sqrt(this BigInteger num)
+        {
+            BigInteger x = 1;
+            BigInteger y = (x + num / x) / 2;
+            while (BigInteger.Abs(x-y) > 1)
+            {
+                x = y;
+                y = (x + num / x) / 2;
+            }
+            return y;
+        }
+
 
         private static char itoc(long i)
         {
@@ -147,46 +180,10 @@ namespace Ender.Utils
 
         }
 
-        public static BigInteger GenerateBigNumber(int bitsLength, bool makeSureOdd = false)
+        public static bool IsIntegral(this double b)
         {
-            byte[] ran = new byte[(bitsLength-1)/8 + 1];
-            var rng = System.Security.Cryptography.RNGCryptoServiceProvider.Create();
-            rng.GetNonZeroBytes(ran);
-            var r = new BigInteger(ran);
-            if (r.Sign == -1)
-                r = 0 - r;
-            if (makeSureOdd)
-            {
-                if (r.IsEven)
-                    r = r + 1;
-            }
-            rng.Dispose();
-            return r;
-        }
-
-        public static BigInteger GenerateBigPrime(int bitsLength)
-        {
-            var round = bitsLength;
-            while(round > 0)
-            {
-                var testee = GenerateBigNumber(bitsLength, true);
-                var confidence = 3;
-                bool testResult = true;
-                for(var i = 0; i < confidence; i++)
-                {
-                    var a = GenerateBigNumber(i + 1);
-                    var powermod = BigInteger.ModPow(a, testee, testee);
-                    if (a != powermod)
-                    {
-                        testResult = false;
-                        break;
-                    }
-                }
-                if (testResult == true)
-                    return testee;
-            }
-
-            return 0;
+            long a = (long)b;
+            return Math.Abs((double)a - b) < 0.00000001;
         }
     }
 }

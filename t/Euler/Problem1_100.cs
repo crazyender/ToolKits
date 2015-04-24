@@ -68,8 +68,7 @@ namespace Euler
             BigInteger p = new BigInteger(3);
             Console.WriteLine("{0} ^ {1} = {2}", i, p, i.Power(p));
 
-            BigInteger prime = Algebra.GenerateBigPrime(2048);
-            Console.WriteLine("{0} bit length prime {1}", 2048, prime);
+
 
             i = new BigInteger(2);
             p = new BigInteger(4);
@@ -78,7 +77,7 @@ namespace Euler
 
         public void CodedTriangleNumbers()
         {
-            string content = ScriptTools.Cat(@"C:\Users\zhengjia\Desktop\test\p042_words.txt");
+            string content = ScriptTools.Cat(@"C:\euler\p042_words.txt");
             var words = content.Replace("\"", "").Split(new char[]{','});
             var numbers = words.Map<string, int>(word => word.Map<char, int>(c => c - 'A' + 1).Sum());
             var triangles = Itertools.Range(1, 1000).Map<int, int>(i => i * (i + 1) / 2);
@@ -270,6 +269,100 @@ namespace Euler
             b += 1;
             var result = b % 10000000000;
             Console.WriteLine("{0}", result);
+        }
+
+        public void LargestExponential()
+        {
+            string content = ScriptTools.Cat(@"c:\euler\p099_base_exp.txt");
+            var original = content.Lines().ToArray();
+            var lines = content.Lines()
+                .Map<string, double>(
+                    str =>
+                    {
+                        var numbers = str.Split(new char[] { ',' });
+                        var a = int.Parse(numbers[0]);
+                        var b = int.Parse(numbers[1]);
+                        return Math.Log10((double)a) * (double)b;
+                    }
+                );
+            double max = 0.0;
+            int index = 1;
+            int max_idx = 1;
+            foreach (var line in lines)
+            {
+                if (max < line)
+                {
+                    max = line;
+                    max_idx = index;
+                }
+                index++;
+            }
+            Console.WriteLine("Max line {0}: {1}", max_idx, original[max_idx]);
+        }
+
+        public void PrimePowerTriples()
+        {
+            // 7072
+            // 369
+            // 85
+            var squres = Itertools
+                .Range(2, 7072)
+                .Filter(x => x.IsPrime())
+                .Map<int, int>(x => x*x);
+            var cubes = Itertools
+                .Range(2, 369)
+                .Filter(x => x.IsPrime())
+                .Map<int, int>(x => x * x * x);
+            var fourth = Itertools
+                .Range(2, 85)
+                .Filter(x => x.IsPrime())
+                .Map<int, int>(x => x * x * x * x);
+            var numbers = new HashSet<int>();
+            foreach(var s in squres)
+            {
+                foreach(var c in cubes)
+                {
+                    foreach( var f in fourth)
+                    {
+                        var p = s + c + f;
+                        if (p > 50000000)
+                            continue;
+                        if (!numbers.Contains(p))
+                            numbers.Add(p);
+                    }
+                }
+            }
+
+
+            Console.WriteLine("{0}", numbers.Count());
+
+        }
+
+        public void OptimumPolynomial()
+        {
+            // U(n) = 1 − n + n^2 − n^3 + n^4 − n^5 + n^6 − n^7 + n^8 − n^9 + n^10
+
+            var num = 1000000;
+            var primes = Itertools.GenPrime().SubList(num).ElementAt(num - 1);
+
+            //var correct = Itertools.Range(0, 12)
+            //    .Map<int, BigInteger>(x =>
+            //        {
+            //            BigInteger bx = new BigInteger(x);
+            //            BigInteger i = 1;
+            //            i -= x;
+            //            i += BigInteger.Pow(bx, 2);
+            //            i -= BigInteger.Pow(bx, 3);
+            //            i += BigInteger.Pow(bx, 4);
+            //            i -= BigInteger.Pow(bx, 5);
+            //            i += BigInteger.Pow(bx, 6);
+            //            i -= BigInteger.Pow(bx, 7);
+            //            i += BigInteger.Pow(bx, 8);
+            //            i -= BigInteger.Pow(bx, 9);
+            //            i += BigInteger.Pow(bx, 10);
+            //            return i;
+            //        }).ToArray();
+
         }
     }
 }

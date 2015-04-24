@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -143,9 +144,9 @@ namespace Ender.Utils
             }
         }
 
-        public static T Reduce<T>(this IEnumerable<T> l, T start, Func<T, T, T> func)
+        public static OUT Reduce<IN, OUT>(this IEnumerable<IN> l, OUT start, Func<OUT, IN, OUT> func)
         {
-            T result = start;
+            OUT result = start;
             foreach(var v in l)
             {
                 result = func(result, v);
@@ -182,6 +183,8 @@ namespace Ender.Utils
             }
         }
 
+
+
         public static IEnumerable<T> NoDup<T>(this IEnumerable<T> l)
         {
             HashSet<T> dict = new HashSet<T>();
@@ -194,12 +197,45 @@ namespace Ender.Utils
             return dict.AsEnumerable();
         }
 
+        public static IEnumerable<T> Sort<T>(this IEnumerable<T> l)
+        {
+            return l.OrderBy(x => x);
+        }
+
+        public static IEnumerable<T> DescendSort<T>(this IEnumerable<T> l)
+        {
+            return l.OrderByDescending(x => x);
+        }
+
+        public static IEnumerable<BigInteger> GenPrime()
+        {
+            BigInteger i = 2;
+            while(true)
+            {
+                if (i.IsPrime())
+                    yield return i;
+                i++;
+            }
+        }
+
+        public static IEnumerable<T> SubList<T>(this IEnumerable<T> l, long size)
+        {
+            long count = 0;
+            foreach(var i in l)
+            {
+                if (count >= size)
+                    break;
+                yield return i;
+                count++;
+            }
+        }
+
         public static int GroupSize<T>(this IEnumerable<T> l)
         {
             HashSet<T> dict = new HashSet<T>();
             foreach (var v in l)
             {
-                //if (!dict.Contains(v))
+                if (!dict.Contains(v))
                     dict.Add(v);
             }
 

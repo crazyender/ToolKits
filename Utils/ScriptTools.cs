@@ -25,4 +25,13 @@ namespace Ender.Utils
             return context;
         }
     }
+
+    public static class StringEnhance
+    {
+        public static IEnumerable<string> Lines(this string str)
+        {
+            var lines = str.Split(new char[] { '\r', '\n' }).ToList();
+            return lines.Filter(s => !string.IsNullOrEmpty(s));
+        }
+    }
 }
